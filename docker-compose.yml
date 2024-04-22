@@ -1,0 +1,66 @@
+version: "1.0"
+
+services:
+
+  db:
+    image: postgres:13.5
+    container_name: postgres
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=1000"
+      - "-c"
+      - "shared_buffers=1GB"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 2024secret2024
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - net1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  pgadmin:
+    image: dpage/pgadmin4:6.4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: 2024secret2024
+      PGADMIN_LISTEN_PORT: 8085
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    links:
+      - "db:pgsql-server"
+    networks:
+      - net1
+
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:4.0.8-alpine
+    volumes:
+      - /opt/redis:/data/redis
+      - ./dockerconf/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    networks:
+      - net1
+
+networks:
+  net1:
+    driver: bridge
+
+volumes:
+  db_volume:

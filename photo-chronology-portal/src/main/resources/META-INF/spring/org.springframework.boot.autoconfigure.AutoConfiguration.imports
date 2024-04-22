@@ -1,0 +1,5 @@
+com.andersen.pc.portal.configuration.JpaConfiguration
+com.andersen.pc.portal.configuration.RedisConfiguration
+com.andersen.pc.portal.configuration.RestTemplateConfiguration
+com.andersen.pc.portal.configuration.SecurityConfiguration
+com.andersen.pc.portal.configuration.SwaggerConfiguration

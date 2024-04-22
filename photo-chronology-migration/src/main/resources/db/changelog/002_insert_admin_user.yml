@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_table_users_admin_user
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from roles where role_name = 'admin'
+      changes:
+        - tagDatabase:
+            tag: insert_table_users_admin_user
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: admin
+              - column:
+                  name: email
+                  value: admin@email.com
+              - column:
+                  name: status
+                  value: ACTIVE
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+      rollback:
+        - sql:
+            sql: delete from users where name = 'admin'
+  - changeSet:
+      id: insert_roles_for_admin_user
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 1
+            sql: select count(*) from users where email ='admin@email.com'
+      changes:
+        - tagDatabase:
+            tag: insert_roles_for_admin_user
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: role_id
+                  value: 1
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: role_id
+                  value: 2
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_user_password_for_admin_user
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 1
+            sql: select count(*) from users where email ='admin@email.com'
+      changes:
+        - tagDatabase:
+            tag: insert_user_password_for_admin_user
+        - insert:
+            tableName: user_passwords
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: password_hash
+                  value: '{noop}admin'
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()

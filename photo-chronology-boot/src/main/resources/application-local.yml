@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/photo_chronology_db
+    username: chronologist
+    password: 123chronologist123
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  file:
+    path: logs
+    name: ${logging.file.path}/portal.log
+
+jwt:
+  secret:
+    access: 3RZU0KxSnwklkL/okp1ICEaeHsv/Z38FWtiHbNy7VSJD9oD+26MnJ/JMiXQOpgh1oz4DJISTF0Il4OB43WzvaA==
+
+aws:
+  accessKeyId: AKIAYS2NWAPLN25DEBP6
+  secretKey: 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
+  s3:
+    bucketName: photo-storage-photo-chronology
+    region: eu-north-1
+    folderName: photos
+    expiration: 300000

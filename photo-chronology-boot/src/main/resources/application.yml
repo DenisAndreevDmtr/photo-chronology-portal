@@ -1,0 +1,50 @@
+server:
+  servlet:
+    context-path: "/photo-chronology-portal"
+
+spring:
+  application:
+    name: Photo Chronology Portal
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    banner-mode: log
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1MB
+      max-request-size: 1MB
+  liquibase:
+    enabled: false
+
+springdoc:
+  api-docs:
+    version: openapi_3_0
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0

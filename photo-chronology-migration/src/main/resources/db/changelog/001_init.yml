@@ -1,0 +1,463 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_table_users
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: users
+      changes:
+        - tagDatabase:
+            tag: create_table_users
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: status
+                  type: varchar(8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: varchar(100)
+              - column:
+                  name: modified_at
+                  type: datetime
+  - changeSet:
+      id: create_index_users_email
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: users
+              indexName: idx_users_email
+      changes:
+        - tagDatabase:
+            tag: create_index_users_email
+        - createIndex:
+            indexName: idx_users_email
+            tableName: users
+            columns:
+              - column:
+                  name: email
+  - changeSet:
+      id: create_table_roles
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: roles
+      changes:
+        - tagDatabase:
+            tag: create_table_roles
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: varchar(5)
+                  constraints:
+                    nullable: false
+                    unique: true
+  - changeSet:
+      id: insert_table_roles_admin
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from roles where role_name = 'ADMIN'
+      changes:
+        - tagDatabase:
+            tag: insert_table_roles_admin
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: ADMIN
+      rollback:
+        - sql:
+            sql: delete from roles where role_name = 'ADMIN'
+  - changeSet:
+      id: insert_table_roles_user
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from roles where role_name = 'USER'
+      changes:
+        - tagDatabase:
+            tag: insert_table_roles_user
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: USER
+      rollback:
+        - sql:
+            sql: delete from roles where role_name = 'USER'
+  - changeSet:
+      id: create_table_user_role
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: user_role
+      changes:
+        - tagDatabase:
+            tag: create_table_user_role
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_role_user_id
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_role_role_id
+                    references: roles(id)
+                    deleteCascade: true
+              - column:
+                  name: created_by
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: varchar(100)
+              - column:
+                  name: modified_at
+                  type: datetime
+  - changeSet:
+      id: create_index_user_role_user_id
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: user_role
+              indexName: idx_user_role_user_id
+      changes:
+        - tagDatabase:
+            tag: create_index_user_role_user_id
+        - createIndex:
+            indexName: idx_user_role_user_id
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+  - changeSet:
+      id: create_index_user_role_role_id
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: user_role
+              indexName: idx_user_role_role_id
+      changes:
+        - tagDatabase:
+            tag: create_index_user_role_role_id
+        - createIndex:
+            indexName: idx_user_role_role_id
+            tableName: user_role
+            columns:
+              - column:
+                  name: role_id
+  - changeSet:
+      id: create_index_user_role_user_id_role_id_uniq
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: user_role
+              indexName: idx_user_role_user_id_role_id_uniq
+      changes:
+        - tagDatabase:
+            tag: create_index_user_role_user_id_role_id_uniq
+        - createIndex:
+            indexName: idx_user_role_user_id_role_id_uniq
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: role_id
+            unique: true
+  - changeSet:
+      id: create_table_trips
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: trips
+      changes:
+        - tagDatabase:
+            tag: create_table_trips
+        - createTable:
+            tableName: trips
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_trip_user_id
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: created_by
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: varchar(100)
+              - column:
+                  name: modified_at
+                  type: datetime
+  - changeSet:
+      id: create_index_trip_user_id
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: trips
+              indexName: idx_trip_user_id
+      changes:
+        - tagDatabase:
+            tag: create_index_trip_user_id
+        - createIndex:
+            indexName: idx_trip_user_id
+            tableName: trips
+            columns:
+              - column:
+                  name: user_id
+  - changeSet:
+      id: create_table_photos
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: photos
+      changes:
+        - tagDatabase:
+            tag: create_table_photos
+        - createTable:
+            tableName: photos
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: aws_key
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trip_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_photo_trip_id
+                    references: trips(id)
+                    deleteCascade: true
+              - column:
+                  name: created_by
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: varchar(100)
+              - column:
+                  name: modified_at
+                  type: datetime
+  - changeSet:
+      id: create_index_photo_trip_id
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: photos
+              indexName: idx_photo_trip_id
+      changes:
+        - tagDatabase:
+            tag: create_index_photo_trip_id
+        - createIndex:
+            indexName: idx_photo_trip_id
+            tableName: photos
+            columns:
+              - column:
+                  name: trip_id
+  - changeSet:
+      id: create_table_user_passwords
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: user_passwords
+      changes:
+        - tagDatabase:
+            tag: create_table_user_passwords
+        - createTable:
+            tableName: user_passwords
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_password_user_id
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: password_hash
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: varchar(100)
+              - column:
+                  name: modified_at
+                  type: datetime
+  - changeSet:
+      id: create_index_user_password_user_id
+      author: d.andreyeu
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            indexExists:
+              tableName: user_passwords
+              indexName: idx_user_password_user_id
+      changes:
+        - tagDatabase:
+            tag: create_index_user_password_user_id
+        - createIndex:
+            indexName: idx_user_password_user_id
+            tableName: user_passwords
+            columns:
+              - column:
+                  name: user_id

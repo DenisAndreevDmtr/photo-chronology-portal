@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: grant_authorities_to_chronologist_user
+      author: d.andreyeu
+      runAlways: true
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 1
+            sql: SELECT COUNT(*) FROM pg_roles WHERE rolname='chronologist'
+      changes:
+        - tagDatabase:
+            tag: grant_authorities_to_chronologist_user
+        - sql:
+            sql: GRANT ALL ON ALL TABLES IN SCHEMA "public" to chronologist;
+      rollback: empty

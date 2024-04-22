@@ -1,0 +1,178 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_table_users_admin_user
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_table_users_admin_user
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: admin
+              - column:
+                  name: email
+                  value: admin@email.com
+              - column:
+                  name: status
+                  value: ACTIVE
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_roles_for_admin_user
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_roles_for_admin_user
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: role_id
+                  value: 1
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: role_id
+                  value: 2
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_user_password_for_admin_user
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_user_password_for_admin_user
+        - insert:
+            tableName: user_passwords
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: password_hash
+                  value: '{noop}admin'
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_trip_for_admin_user
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_user_password_for_admin_user
+        - insert:
+            tableName: trips
+            columns:
+              - column:
+                  name: title
+                  value: 'title'
+              - column:
+                  name: date
+                  value: NOW()
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_trip_for_search
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_user_password_for_search
+        - insert:
+            tableName: trips
+            columns:
+              - column:
+                  name: title
+                  value: 'trip for search'
+              - column:
+                  name: date
+                  value: NOW()
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_trip_for_delete
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_trip_for_delete
+        - insert:
+            tableName: trips
+            columns:
+              - column:
+                  name: title
+                  value: 'trip for delete'
+              - column:
+                  name: date
+                  value: NOW()
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()
+  - changeSet:
+      id: insert_trip_for_update
+      author: d.andreyeu
+      changes:
+        - tagDatabase:
+            tag: insert_trip_for_update
+        - insert:
+            tableName: trips
+            columns:
+              - column:
+                  name: title
+                  value: 'old trip title'
+              - column:
+                  name: date
+                  value: NOW()
+              - column:
+                  name: user_id
+                  valueComputed: "(select id from users where email ='admin@email.com')"
+              - column:
+                  name: created_by
+                  value: PC_PORTAL
+              - column:
+                  name: created_at
+                  value: NOW()

@@ -21,8 +21,8 @@ jwt:
     access: 3RZU0KxSnwklkL/okp1ICEaeHsv/Z38FWtiHbNy7VSJD9oD+26MnJ/JMiXQOpgh1oz4DJISTF0Il4OB43WzvaA==
 
 aws:
-  accessKeyId: AKIAYS2NWAPLN25DEBP6
-  secretKey: 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
+  accessKeyId: id
+  secretKey: key
   s3:
     bucketName: photo-storage-photo-chronology
     region: eu-north-1
